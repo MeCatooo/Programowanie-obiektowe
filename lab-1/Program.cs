@@ -6,36 +6,54 @@ namespace lab_1
     {
         static void Main(string[] args)
         {
-            Person person = Person.Of("akj");
-            Person person1 = Person.Of("akj");
-            Console.WriteLine(person.Equals(person1));
-            Money money = Money.OfWithException(1, Currency.PLN);
-            Money money1 = Money.OfWithException(2, Currency.PLN);
-            Console.WriteLine(money.Value);
-            Money result = money * 4;
-            Console.WriteLine(result.Value);
-            Money result1 = 2 * money;
-            Console.WriteLine(result1.Value);
-            Console.WriteLine(money > money1);
-            Console.WriteLine((string)money);
-            Money[] pricies =
+            //Person person = Person.Of("akj");
+            //Person person1 = Person.Of("akj");
+            //Console.WriteLine(person.Equals(person1));
+            //Money money = Money.OfWithException(1, Currency.PLN);
+            //Money money1 = Money.OfWithException(2, Currency.PLN);
+            //Console.WriteLine(money.Value);
+            //Money result = money * 4;
+            //Console.WriteLine(result.Value);
+            //Money result1 = 2 * money;
+            //result1 = money.ToCurrency(Currency.USD, 4.16m);
+            //Console.WriteLine(result1.Value);
+            //Console.WriteLine(money > money1);
+            //Console.WriteLine((string)money);
+            //Money[] pricies =
+            //{
+            //    Money.Of(11,Currency.USD),
+            //    Money.Of(2,Currency.PLN),
+            //    Money.Of(13,Currency.EUR),
+            //    Money.Of(19,Currency.EUR),
+            //    Money.Of(1,Currency.USD),
+            //    Money.Of(16,Currency.PLN)
+            //};
+            //Array.Sort(pricies);
+            //foreach (var p in pricies)
+            //{
+            //    Console.WriteLine((string)p);
+            //}
+            //Tank tank = new Tank(100);
+            //Tank tank1 = new Tank(100);
+            //tank.refuel(10);
+            //tank1.refuel(tank, 10);
+            //Console.WriteLine(tank.Level);
+            //Console.WriteLine(tank1.Level);
+            Student[] students =
             {
-                Money.Of(11,Currency.USD),
-                Money.Of(2,Currency.PLN),
-                Money.Of(13,Currency.EUR),
-                Money.Of(19,Currency.EUR),
-                Money.Of(1,Currency.USD),
-                Money.Of(16,Currency.PLN)
+                new Student("Bartek","Bartłomiej",5),
+                new Student("Adam","Adamski",3),
+                new Student("Celsjusz","Celsjuszowaty",1)
+                
             };
-            Array.Sort(pricies);
-            foreach(var p in pricies)
+            Array.Sort(students);
+            foreach (var item in students)
             {
-                Console.WriteLine((string)p);
+                Console.WriteLine($"{item.Imie}, {item.Nazwisko}, {item.Srednia}");
             }
-
         }
     }
-    public class Person:IEquatable<Person>
+    public class Person : IEquatable<Person>
     {
         private string firstName;
         public string FirstName
@@ -99,7 +117,7 @@ namespace lab_1
         USD = 2,
         EUR = 3
     }
-    public class Money:IComparable<Money>
+    public class Money : IComparable<Money>
     {
         private readonly decimal _value;
         private readonly Currency _currency;
@@ -194,7 +212,7 @@ namespace lab_1
         public int CompareTo(Money other)
         {
             int currencyCon = Currency.CompareTo(other.Currency);
-            if(currencyCon == 0)
+            if (currencyCon == 0)
             {
                 return Value.CompareTo(other.Value);
             }
@@ -202,6 +220,121 @@ namespace lab_1
             {
                 return currencyCon;
             }
+        }
+    }
+    public static class MoneyExtensions
+    {
+        public static Money ToCurrency(this Money money, Currency currency, decimal kurs)
+        {
+            if (currency != money.Currency && money != null)
+                return Money.OfWithException(money.Value * kurs, currency);
+            else
+                throw new ArgumentException();
+        }
+    }
+    public class Tank
+    {
+        public readonly int Capacity;
+        private int _level;
+        public Tank(int capacity)
+        {
+            Capacity = capacity;
+        }
+        public int Level
+        {
+            get
+            {
+                return _level;
+            }
+            private set
+            {
+                if (value < 0 || value > Capacity)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                _level = value;
+            }
+        }
+        public bool refuel(int amount)
+        {
+            if (amount < 0)
+            {
+                return false;
+            }
+            if (_level + amount > Capacity)
+            {
+                return false;
+            }
+            _level += amount;
+            return true;
+        }
+        public bool consume(int amount)
+        {
+            if (amount < 0)
+            {
+                return false;
+            }
+            if (_level - amount > Capacity)
+            {
+                return false;
+            }
+            _level -= amount;
+            return true;
+        }
+        public bool refuel(Tank sourceTank, int amount)
+        {
+            if (!sourceTank.consume(amount))
+            {
+                return false;
+            }
+            if (!this.refuel(amount))
+            {
+                return false;
+            }
+            return true;
+        }
+    }
+    public class Student : IComparable<Student>
+    {
+        public Student(string nazwisko, string imie, decimal srednia)
+        {
+            Nazwisko = nazwisko;
+            Imie = imie;
+            Srednia = srednia;
+        }
+
+        public string Nazwisko { get; set; }
+        public string Imie { get; set; }
+        public decimal Srednia { get; set; }
+
+        public int CompareTo(Student other)
+        {
+            int nazwiskoCon = Nazwisko.CompareTo(other.Nazwisko);
+            int imieCon = Imie.CompareTo(other.Imie);
+            int sredniaCon = Srednia.CompareTo(other.Srednia);
+            if(nazwiskoCon == 0)
+            {
+                if (imieCon == 0)
+                {
+                    if(sredniaCon == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return sredniaCon;
+                    }
+                }
+                else
+                {
+                    return imieCon;
+                }
+            }
+            else
+            {
+                return nazwiskoCon;
+            }
+            
         }
     }
 
