@@ -39,18 +39,33 @@ namespace lab_1
             //tank1.refuel(tank, 10);
             //Console.WriteLine(tank.Level);
             //Console.WriteLine(tank1.Level);
-            Student[] students =
-            {
-                new Student("Bartek","Bartłomiej",5),
-                new Student("Adam","Adamski",3),
-                new Student("Celsjusz","Celsjuszowaty",1)
-                
-            };
-            Array.Sort(students);
-            foreach (var item in students)
-            {
-                Console.WriteLine($"{item.Imie}, {item.Nazwisko}, {item.Srednia}");
-            }
+            //Student[] students =
+            //{
+            //    new Student("Bartek","Bartłomiej",5),
+            //    new Student("Adam","Adamski",3),
+            //    new Student("Celsjusz","Celsjuszowaty",1)
+
+            //};
+            //Array.Sort(students);
+            //foreach (var item in students)
+            //{
+            //    Console.WriteLine($"{item.Imie}, {item.Nazwisko}, {item.Srednia}");
+            //}
+            /////////////////////////////////////////
+            //Length length = Length.Create(10);
+            //Length length1 = Length.Create(20);
+            //Length result = length + length1;
+            //Console.WriteLine(result);
+            //Length result1 = length * 2;
+            //Console.WriteLine(result1);
+            //Length result2 = length / 2;
+            //Console.WriteLine(result2);
+            /////////////////////////////////////////
+            Beam beam = new Beam(10, 20);
+            Console.WriteLine(beam);
+            beam.Cut(5);
+            Console.WriteLine(beam);
+            Console.WriteLine(beam/2);
         }
     }
     public class Person : IEquatable<Person>
@@ -312,11 +327,11 @@ namespace lab_1
             int nazwiskoCon = Nazwisko.CompareTo(other.Nazwisko);
             int imieCon = Imie.CompareTo(other.Imie);
             int sredniaCon = Srednia.CompareTo(other.Srednia);
-            if(nazwiskoCon == 0)
+            if (nazwiskoCon == 0)
             {
                 if (imieCon == 0)
                 {
-                    if(sredniaCon == 0)
+                    if (sredniaCon == 0)
                     {
                         return 0;
                     }
@@ -334,9 +349,126 @@ namespace lab_1
             {
                 return nazwiskoCon;
             }
-            
+
         }
     }
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //ZADANIE DOMOWE//
+    //////////////////////////////////////////////////////////////////////////////////////
+    ///<summary> Klasa przechowująca długość w metrach, zad 1</summary>
+    public class Length 
+    {
+        private readonly double _lenght;
+        public double length
+        {
+            get
+            {
+                return _lenght;
+            }
+        }
+        private Length(double lenght)
+        {
+            this._lenght = lenght;
+        }
+        ///<summary> Tworzy nową klasę przechowującą długość</summary>
+        public static Length Create(double lenght)
+        {
+            if (lenght < 0)
+            {
+                throw new ArgumentException();
+            }
+            else
+            {
+                return new Length(lenght);
+            }
+        }
+        ///<summary> Dodaje długości</summary>
+        public static Length operator +(Length length, Length length1)
+        {
+            return Create(length.length + length1.length);
+        }
+        ///<summary> Dzieli długości</summary>
+        public static Length operator /(Length length, int divider)
+        {
+            return Create(length.length / divider);
+        }
+        ///<summary> Mnoży długości</summary>
+        public static Length operator *(Length length, int times)
+        {
+            return Create(length.length * times);
+        }
+        ///<summary> Zwraca długość w metrach</summary>
+        public override string ToString()
+        {
+            return $"{length}m";
+        }
+    }
+    ///<summary> Klasa opisująca bele materiału, zad 1</summary>
+    public class Beam 
+    {
+        private double _width;
+        private double _length;
+        public double width
+        {
+            get
+            {
+                return _width;
+            }
+        }
+        public double length 
+        { 
+            get 
+            { 
+                return _length; 
+            } 
+        }
+        ///<summary> Tworzy nową klasę przechowującą belę</summary>
+        public Beam(double width, double length)
+        {
+            _width = width;
+            _length = length;
+        }
+        ///<summary> Odcina kawałek materiału od beli</summary>
+        public bool Cut(double Lenght)
+        {
+            if (Lenght < 0 || _length<Lenght)
+            {
+                return false;
+            }
+            else
+            {
+                _length -= Lenght;
+                return true;
+            }
+        }
+        ///<summary> Zwraca pozostałe pole materiału na beli</summary>
+        public double FieldLeft()
+        {
+            return _width * _length;
+        }
+        ///<summary> Zwraca pozostałą długośc materiału na beli</summary>
+        public double LenghtLeft()
+        {
+            return _length;
+        }
+        ///<summary> Sprawdza czy bela jest pusta</summary>
+        public bool IsEmpty()
+        {
+            if (_length == 0)
+                return true;
+            else
+                return false;
+        }
+        ///<summary> Dzieli bele na równe kawałki</summary>
+        public static Beam operator /(Beam beam, int divider)
+        {
+            return new Beam(beam.width/ divider, beam.length);
+        }
+        ///<summary> Zwraca wymiary beli</summary>
+        public override string ToString()
+        {
+            return $"{width}x{length}";
+        }
 
-
+    }
 }
